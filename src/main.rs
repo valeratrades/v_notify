@@ -69,6 +69,11 @@ fn start(args: SendArgs) {
 }
 
 fn send_with_tg_cli(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
+	eprintln!(
+		"Ignoring importance and urgency for now.\nImportance: {}\nUrgency: {}",
+		importance.unwrap_or_default().0,
+		urgency.unwrap_or_default().0
+	);
 	std::process::Command::new("tg")
 		.arg("send")
 		.arg("-c")
@@ -78,6 +83,7 @@ fn send_with_tg_cli(text: String, importance: Option<Importance>, urgency: Optio
 		.expect("Failed to send message");
 }
 
+#[allow(dead_code)]
 fn send_the_message_with_notifysend(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
 	eprintln!("Ignoring importance for now.\nImportance: {}", importance.unwrap_or_default().0);
 	let notify_send_urgency = match urgency {
