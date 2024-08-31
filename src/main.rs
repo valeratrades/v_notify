@@ -65,10 +65,20 @@ fn main() {
 }
 
 fn start(args: SendArgs) {
-	send_the_message(args.text, args.importance, args.urgency);
+	send_with_tg_cli(args.text, args.importance, args.urgency);
 }
 
-fn send_the_message(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
+fn send_with_tg_cli(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
+	std::process::Command::new("tg")
+		.arg("send")
+		.arg("-c")
+		.arg("alerts")
+		.arg(text)
+		.spawn()
+		.expect("Failed to send message");
+}
+
+fn send_the_message_with_notifysend(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
 	eprintln!("Ignoring importance for now.\nImportance: {}", importance.unwrap_or_default().0);
 	let notify_send_urgency = match urgency {
 		Some(u) => match u.0 {
