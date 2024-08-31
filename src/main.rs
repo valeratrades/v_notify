@@ -92,7 +92,7 @@ fn send_with_tg_cli(text: String, importance: Option<Importance>, urgency: Optio
 }
 
 #[allow(dead_code)]
-fn send_the_message_with_notifysend(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
+fn send_with_notifysend(text: String, importance: Option<Importance>, urgency: Option<Urgency>) {
 	eprintln!("Ignoring importance for now.\nImportance: {}", importance.unwrap_or_default().0);
 	let notify_send_urgency = match urgency {
 		Some(u) => match u.0 {
