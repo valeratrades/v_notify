@@ -16,7 +16,6 @@ len_zero = "allow" # `.empty()` is O(1) but on &str only
 
 [dependencies]
 anyhow = "^1.0.86"
-clap = { version = "^4.5.4", features = ["derive"] }
-config = { version = "^0.14.0" }
-derive-new = "^0.6.0"
+clap = { version = "^4.5.16", features = ["derive"] }
+derive-new = "^0.7.0"
 v_utils = { features = ["io", "macros"], path = "/home/v/s/v_utils/v_utils" }
