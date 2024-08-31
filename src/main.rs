@@ -19,6 +19,10 @@ impl Default for Commands {
 	}
 }
 
+/// Importance of the Message
+///
+/// Values 1-5 in rising order of importance.
+/// Guaranteed to be forever backwards-compatible.
 #[derive(Clone, Debug, Default, Copy)]
 struct Importance(pub u8);
 impl std::str::FromStr for Importance {
@@ -29,6 +33,10 @@ impl std::str::FromStr for Importance {
 	}
 }
 
+/// Urgency of the Message
+//
+/// Values 1-5 in rising order of urgency.
+/// Guaranteed to be forever backwards-compatible.
 #[derive(Clone, Debug, Default, derive_new::new, Copy)]
 struct Urgency(pub u8);
 impl std::str::FromStr for Urgency {
