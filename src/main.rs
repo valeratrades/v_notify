@@ -6,7 +6,7 @@ use v_utils::io::ExpandedPath;
 struct Cli {
 	#[command(subcommand)]
 	command: Commands,
-	#[arg(long, default_value = "~/.config/what.toml")]
+	#[arg(long, default_value = "~/.config/v_notify.toml")]
 	config: ExpandedPath,
 }
 #[derive(Subcommand, Debug)]

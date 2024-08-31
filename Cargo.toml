@@ -18,4 +18,4 @@ len_zero = "allow" # `.empty()` is O(1) but on &str only
 anyhow = "^1.0.86"
 clap = { version = "^4.5.16", features = ["derive"] }
 derive-new = "^0.7.0"
-v_utils = { features = ["io", "macros"], path = "/home/v/s/v_utils/v_utils" }
+v_utils = { features = ["io", "macros"], path = "/home/v/s/v_utils/v_utils" } #ga: sub path
