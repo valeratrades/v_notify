@@ -15,8 +15,8 @@ cmp_float = "allow" # is bad for `==` direct comparisons, but `<` and `>` should
 len_zero = "allow" # `.empty()` is O(1) but on &str only
 
 [dependencies]
-derive-new = "^0.6.0"
 anyhow = "^1.0.86"
 clap = { version = "^4.5.4", features = ["derive"] }
-v_utils = { features = ["io", "macros"], path = "/home/v/s/v_utils/v_utils" }
 config = { version = "^0.14.0" }
+derive-new = "^0.6.0"
+v_utils = { features = ["io", "macros"], path = "/home/v/s/v_utils/v_utils" }
