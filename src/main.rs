@@ -113,8 +113,8 @@ fn send_with_tg_cli(text: String, importance: Option<Importance>, urgency: Optio
 	);
 	std::process::Command::new("tg")
 		.arg("send")
-		.arg("-c")
-		.arg("alerts")
+		.arg("-d")
+		.arg("-1001800341082")
 		.arg(text)
 		.spawn()
 		.expect("Failed to send message");
