@@ -1,33 +1,35 @@
-use std::{sync::Arc, time::Duration};
+use std::time::Duration;
 
 use clap::Parser;
-pub mod config;
-use config::{LiveSettings, SettingsFlags};
+use color_eyre::eyre::Result;
+use v_notify::{Adapter, Color, Importance, config::LiveSettings};
 
-fn main() {
-    v_utils::clientside!();
-    let cli = Cli::parse();
-    let live_settings = match LiveSettings::new(cli.settings, Duration::from_secs(5)) {
-        Ok(ls) => Arc::new(ls),
-        Err(e) => {
-            eprintln!("Error reading config: {e}");
-            for cause in e.chain().skip(1) {
-                eprintln!("  Caused by: {cause}");
-            }
-            return;
-        }
-    };
-    greet(live_settings);
-}
-
-#[derive(Parser, Default)]
+#[derive(Parser)]
 #[command(author, version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("GIT_HASH"), ")"), about, long_about = None)]
 struct Cli {
-    #[command(flatten)]
-    settings: SettingsFlags,
+	#[command(flatten)]
+	settings: v_notify::config::SettingsFlags,
+	#[arg(short, long, value_enum, default_value_t = Adapter::Tg)]
+	adapter: Adapter,
+	#[arg(short, long)]
+	level: Importance,
+	text: String,
 }
 
-fn greet(settings: Arc<LiveSettings>) {
-    let config = settings.config();
-    println!("Hello, {}!", config.unwrap().example_greet);
+fn main() {
+	v_utils::clientside!();
+	if let Err(e) = run(Cli::parse()) {
+		eprintln!("Error: {e}");
+		for cause in e.chain().skip(1) {
+			eprintln!("  Caused by: {cause}");
+		}
+		std::process::exit(1);
+	}
+}
+
+fn run(cli: Cli) -> Result<()> {
+	let settings = LiveSettings::new(cli.settings, Duration::from_secs(5))?;
+	let config = settings.config().map_err(|e| color_eyre::eyre::eyre!("reading config: {e}"))?;
+	let target = config.resolve(cli.adapter, cli.level)?;
+	v_notify::send(&target, Color::from(cli.level), &cli.text)
 }
