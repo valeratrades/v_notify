@@ -17,10 +17,6 @@ pub enum Importance {
 	Error,
 }
 
-impl Importance {
-	pub const ALL: [Importance; 5] = [Importance::Trace, Importance::Info, Importance::Debug, Importance::Warn, Importance::Error];
-}
-
 impl FromStr for Importance {
 	type Err = String;
 
@@ -90,29 +86,20 @@ pub enum Target {
 
 impl AppConfig {
 	/// Resolve the send target for `adapter` at `level`. Only the chosen adapter is inspected
-	/// (we never require config for an adapter the user didn't pick). Every importance level of
-	/// the chosen adapter must have a group configured — otherwise we error out.
+	/// (we never require config for an adapter the user didn't pick). An adapter is configured
+	/// wholesale or not at all — a partial section fails to deserialize, so `Some` here is valid.
 	pub fn resolve(&self, adapter: Adapter, level: Importance) -> Result<Target> {
 		match adapter {
 			Adapter::Tg => {
-				if self.telegram.bot_token.is_empty() {
-					bail!("telegram: `bot_token` is not configured");
-				}
-				let missing: Vec<&str> = Importance::ALL.iter().filter(|&&l| self.telegram.group(l).is_none()).map(level_name).collect();
-				if !missing.is_empty() {
-					bail!("telegram: no group configured for level(s): {}", missing.join(", "));
-				}
+				let tg = self.telegram.as_ref().ok_or_else(|| color_eyre::eyre::eyre!("telegram adapter is not configured"))?;
 				Ok(Target::Telegram {
-					bot_token: self.telegram.bot_token.clone(),
-					chat: self.telegram.group(level).expect("validated above").clone(),
+					bot_token: tg.bot_token.clone(),
+					chat: tg.group(level).clone(),
 				})
 			}
 			Adapter::Discord => {
-				let missing: Vec<&str> = Importance::ALL.iter().filter(|&&l| self.discord.group(l).is_none()).map(level_name).collect();
-				if !missing.is_empty() {
-					bail!("discord: no webhook configured for level(s): {}", missing.join(", "));
-				}
-				Ok(Target::DiscordWebhook(self.discord.group(level).expect("validated above").clone()))
+				let dc = self.discord.as_ref().ok_or_else(|| color_eyre::eyre::eyre!("discord adapter is not configured"))?;
+				Ok(Target::DiscordWebhook(dc.group(level).clone()))
 			}
 		}
 	}
@@ -141,13 +128,4 @@ pub fn send(target: &Target, color: Color, text: &str) -> Result<()> {
 		bail!("send failed ({status}): {}", response.text().unwrap_or_default());
 	}
 	Ok(())
-}
-fn level_name(l: &Importance) -> &'static str {
-	match l {
-		Importance::Trace => "trace",
-		Importance::Info => "info",
-		Importance::Debug => "debug",
-		Importance::Warn => "warn",
-		Importance::Error => "error",
-	}
 }
