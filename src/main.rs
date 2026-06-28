@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use clap::Parser;
+use clap_stdin::MaybeStdin;
 use color_eyre::eyre::Result;
 use v_notify::{Adapter, Color, Importance, config::LiveSettings};
 
@@ -13,7 +14,8 @@ struct Cli {
 	adapter: Adapter,
 	#[arg(short, long)]
 	level: Option<Importance>,
-	text: Option<String>,
+	/// Message body; pass `-` to read it from stdin.
+	text: Option<MaybeStdin<String>>,
 	#[command(subcommand)]
 	command: Option<Command>,
 }
