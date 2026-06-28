@@ -22,13 +22,13 @@ fn importance_parses_from_number_color_and_tracing_level() {
 }
 
 #[test]
-fn resolve_errors_when_chosen_adapter_misses_a_level() {
-	// Empty config: nothing configured for either adapter.
+fn resolve_errors_when_chosen_adapter_unconfigured() {
+	// Empty config: neither adapter configured → resolve names the missing adapter.
 	let cfg = AppConfig::default();
 
 	let err = cfg.resolve(Adapter::Tg, Importance::Error).unwrap_err().to_string();
 	assert!(err.contains("telegram"), "{err}");
 
 	let err = cfg.resolve(Adapter::Discord, Importance::Error).unwrap_err().to_string();
-	assert!(err.contains("discord") && err.contains("webhook"), "{err}");
+	assert!(err.contains("discord"), "{err}");
 }
